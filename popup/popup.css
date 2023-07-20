@@ -1,0 +1,122 @@
+.popup {
+  width: 100%;
+  max-width: 300px;
+
+  margin: 1rem;
+  padding: 0;
+  border-radius: 10px;
+  border: none;
+
+  inset: 0;
+  left: 50%;
+  transform: translate(-50%, 0);
+}
+.popup--no-select {
+  user-select: none;
+}
+.popup button {
+  cursor: pointer;
+  background: none;
+  padding: 0.5em 1rem;
+  border-radius: 8px;
+  font-weight: 500;
+}
+.popup--top {
+  top: 0;
+  bottom: unset;
+}
+.popup--center {
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+.popup--bottom {
+  top: unset;
+  bottom: 0;
+}
+
+.popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 700;
+}
+
+.popup-header__title {
+  font-size: 1.4rem;
+}
+
+button.popup-header__close-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #999;
+  margin: 0;
+  padding: 0;
+  transition: color 250ms ease-in-out;
+}
+button.popup-header__close-button:hover {
+  color: black;
+}
+
+.popup-header,
+.popup-content,
+.popup-buttons {
+  padding: 1rem;
+}
+
+.popup-buttons:empty {
+  padding: 0;
+}
+
+.popup-content {
+  color: #4b4b4b;
+}
+
+.popup hr {
+  border: none;
+  border-top: 1px solid #aaaaaa83;
+}
+
+.popup-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.popup-buttons button {
+  font-size: 1.04rem;
+  outline: none;
+  border: 0.8px solid #e5e7eb;
+  background-color: #f3f4f6;
+  color: #6b7280;
+  transition: background-color 250ms ease-in-out, color 250ms ease-in-out;
+}
+.popup-buttons button:hover {
+  color: #2f1827;
+}
+.popup-buttons button.confirm {
+  background-color: #1a56db;
+  color: white;
+  border: none;
+}
+.popup-buttons button.confirm:hover {
+  background-color: #1e429f;
+}
+.popup-buttons button.error {
+  background-color: #e02424;
+  color: white;
+  border: none;
+}
+.popup-buttons button.error:hover {
+  background-color: #9b1c1c;
+}
+.popup-buttons button.disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.popup-buttons--right {
+  justify-content: flex-end;
+}
+.popup-buttons--center {
+  justify-content: center;
+}
