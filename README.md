@@ -145,29 +145,28 @@ document.getElementById('delete-file').onclick = () => DeleteFilePopup.show()
     buttons(buttonObjects: buttonObject[], sharedHandler: function, position: 'left | center |
     right', sharedStyles: string): This method allows you to add buttons to the popup, buttons
     should be added as objects into the buttonObjects array, a buttonObject looks like this:
-    <br />
-    {
-    <br />
-    &nbsp;&nbsp;text: "The button content, it can be HTML or plain text",
-    <br />
-    &nbsp;&nbsp;handler: "The function that will handle the click event of the button",
-    <br />
-    &nbsp;&nbsp;type: "Can be 'confirm or error' this will only change the button styles",
-    <br />
-    &nbsp;&nbsp;style: "Allows you to set custom styles to each button"
-    <br />
-    }
-    <br />
-    So, if you want to add buttons simply create the objects of the buttons that you want to
-    add, and send it as the first parameter of the buttons method, however, as you saw you have
-    more parameters. So for instance, if you want to handle all the buttons event with a single
-    function instead of setting one handler for each funtion, simply send this sharedFunction as
-    a second parameter, this function receives 3 parameters, the event, the clicked button text
-    and the button itself. After that you can set the buttons position being the options 'left |
-    center | right' and lastly if there are some styles that all buttons shared send it as a
-    fourth parameter of the buttons function instead of setting the same styles for each button.
   </li>
 </ul>
+
+```
+{
+  text: "The button content, it can be HTML or plain text",
+  handler: "The function that will handle the click event of the button",
+  type: "Can be 'confirm or error' this will only change the button styles",
+  style: "Allows you to set custom styles to each button"
+}
+```
+
+So, if you want to add buttons simply create the objects of the buttons that you want to
+add, and send it as the first parameter of the buttons method, however, as you saw you have
+more parameters. So for instance, if you want to handle all the buttons event with a single
+function instead of setting one handler for each funtion, simply send this sharedFunction as
+a second parameter, this function receives 3 parameters, the event, the clicked button text
+and the button itself. After that you can set the buttons position being the options 'left |
+center | right' and lastly if there are some styles that all buttons shared send it as a
+fourth parameter of the buttons function instead of setting the same styles for each button.
+
+Let's take a look at how to add the buttons with this new knowledge:
 
 ```
 // this is an icon from Google Icons
@@ -207,26 +206,19 @@ document.getElementById('delete-file').onclick = () => DeleteFilePopup.show()
     of the popup, all properties that can be change through the options method can be changed
     through an inidividual method, but we won't explore each of them, so is just for you to
     know. The optionsObject parameter looks like this:
-    <br />
-    {
-    <br />
-    &nbsp;&nbsp;allowSelect: boolean that allows the user to select content from the popup or
-    not
-    <br />
-    &nbsp;&nbsp;preventExternalClose: boolean that prevents the user from closing the popup by
-    clicking outside of it or not
-    <br />
-    &nbsp;&nbsp;position: 'top | center | bottom' sets the popup on one of the specified
-    positions
-    <br />
-    &nbsp;&nbsp;maxWidth: number that specifies the amount of pixels that the popup will have as
-    width
-    <br />
-    &nbsp;&nbsp;margin: string that will be set as a margin css property to the
-    <br />
-    }
   </li>
 </ul>
+
+```
+{
+  allowSelect: boolean that allows the user to select content from the popup or not
+  preventExternalClose: boolean that prevents the user from closing the popup by clicking outside of it or not
+  position: 'top | center | bottom' sets the popup on one of the specified positions
+  maxWidth: number that specifies the amount of pixels that the popup will have as width
+  margin: string that will be set as a margin css property to the
+}
+```
+
 <p>
   Feel free to fork this repository and change modify it as you wish. There are other things
   that I left out because of time but you can explore the code so you discover more methods and
