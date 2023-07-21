@@ -2,7 +2,7 @@
 let link = document.createElement('link')
 link.rel = 'stylesheet'
 link.type = 'text/css'
-link.href = 'https://cdn.jsdelivr.net/gh/jorgeabrahan/popup_library@main/popup/popup.css'
+link.href = 'https://cdn.jsdelivr.net/gh/jorgeabrahan/popup_library@a37e08a/popup/popup.css'
 document.head.appendChild(link)
 
 // TODO: don't display buttons section if there are no buttons
