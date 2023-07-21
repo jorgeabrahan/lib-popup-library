@@ -40,7 +40,10 @@ Have you ever needed to add a popup to your website but you don't want to import
 </ul>
 
 ```
-https://64b8a8082759da2db83182f8--popup-library.netlify.app/popup/popup.js
+https://cdn.jsdelivr.net/gh/jorgeabrahan/popup_library@main/popup/Popup.js
+
+// You can import the PopupManager class like this
+import PopupManager from 'https://cdn.jsdelivr.net/gh/jorgeabrahan/popup_library@main/popup/Popup.js'
 ```
 
 <p>
