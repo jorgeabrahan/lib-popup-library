@@ -1,7 +1,3 @@
-# popup_library
-
-Have you ever needed to add a popup to your website but you don't want to import a whole framework because it's to heavy or too difficult? This light popup library is the solution to your problem.
-
 <h1>Popup library</h1>
 <p>
   Have you ever struggled to create a nice popup? There are many use cases for popups, and if
