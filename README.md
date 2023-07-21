@@ -40,10 +40,10 @@ Have you ever needed to add a popup to your website but you don't want to import
 </ul>
 
 ```
-https://cdn.jsdelivr.net/gh/jorgeabrahan/popup_library@main/popup/Popup.js
+https://cdn.jsdelivr.net/gh/jorgeabrahan/popup_library@66c9181/popup/Popup.js
 
 // You can import the PopupManager class like this
-import PopupManager from 'https://cdn.jsdelivr.net/gh/jorgeabrahan/popup_library@main/popup/Popup.js'
+import PopupManager from 'https://cdn.jsdelivr.net/gh/jorgeabrahan/popup_library@66c9181/popup/Popup.js'
 ```
 
 <p>
