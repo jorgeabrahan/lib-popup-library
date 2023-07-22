@@ -1,101 +1,65 @@
+import history from './PopupHistory.js'
+import { isNumberInRange } from './helpers.js'
+import popupHTML from './popupHTML.js'
+
 /* Import popup css file */
 let link = document.createElement('link')
 link.rel = 'stylesheet'
 link.type = 'text/css'
-link.href = 'https://cdn.jsdelivr.net/gh/jorgeabrahan/popup_library@a37e08a/popup/popup.css'
+link.href = './popup/popup.css'
+// link.href = 'https://cdn.jsdelivr.net/gh/jorgeabrahan/popup_library@a37e08a/popup/popup.css'
 document.head.appendChild(link)
 
-// TODO: don't display buttons section if there are no buttons
-const isNumberInRange = (range = [0, 2], number = 1) => {
-  return number > range[0] && number < range[1]
-}
-/* define popup html structure */
-const generatePopupHTML = (title = '', btnClose = '') =>
-  `
-    <header class="popup-header">
-      <h3 id='popup-title' class="popup-header__title">${title}</h3>
-      <button id='popup-close-button' class="popup-header__close-button">${btnClose}</button>
-    </header>
-    <hr />
-    <main id='popup-content' class="popup-content"></main>
-    <hr />
-    <footer id='popup-buttons' class="popup-buttons"></footer>
-  `
-
 class PopupManager {
-  constructor(title = '', btnClose = '', styles = '') {
-    /* define popup components initial state */
-    this.initialState = {
-      title: title,
-      btnClose: btnClose,
-      content: '',
-      buttons: []
-    }
+  // custom styles and close button can only be set once
+  constructor({ style = '', btnClose = '' }) {
     /* create popup html element */
     this.element = document.createElement('dialog')
     this.element.className = 'popup popup--top'
-    this.style(styles)
-    this.element.innerHTML = generatePopupHTML(title, btnClose)
-    /* get elements from the popup */
-    this.popupTitle = this.element.querySelector('#popup-title')
-    this.popupBtnClose = this.element.querySelector('#popup-close-button')
-    this.popupContent = this.element.querySelector('#popup-content')
-    this.popupButtons = this.element.querySelector('#popup-buttons')
-    this.dimensions = this.element.getBoundingClientRect()
-    /* add click event to the popup itself to close it */
+    this.element.innerHTML = popupHTML(btnClose)
+    /* set popup styles */
+    this.element.setAttribute('style', style) // custom popup styles
+    this.allowClosing = true
+    /* get needed elements from the popup and set them as properties */
+    this.#setPopupProperties()
+    /* add external popup click to close it */
     this.handleDialogExternalClose = (e) => {
       e.stopImmediatePropagation()
-      const { x, width, y, height } = this.dimensions
+      const { x, width, y, height } = this.element.getBoundingClientRect()
       const userClickedInsidePopup =
         isNumberInRange([x, x + width], e.x) && isNumberInRange([y, y + height], e.y)
-      if (!userClickedInsidePopup) this.close()
+      if (!userClickedInsidePopup && this.allowClosing) this.close()
     }
     this.element.addEventListener('click', this.handleDialogExternalClose)
     /* add click event to popup close button */
-    this.popupBtnClose.addEventListener('click', () => this.close())
+    this.popupBtnClose.addEventListener('click', () => {
+      if (this.allowClosing) this.close()
+    })
     /* set popup options to default */
     this.options({})
     /* add popup to html body */
     document.body.appendChild(this.element)
   }
-  /* sets the popup title */
-  title(title = '') {
-    this.popupTitle.innerHTML = title
-    // first time title is set
-    if (this.initialState.title === '') this.initialState.title = title
-    return this
-  }
-  /* sets the popup close button */
-  btnClose(btnClose = '') {
-    this.popupBtnClose.innerHTML = btnClose
-    // first time btnClose is set
-    if (this.initialState.btnClose === '') this.initialState.btnClose = btnClose
-    return this
-  }
-  /* set custom styles to popup */
-  style(styles = '') {
-    this.element.setAttribute('style', styles) // custom popup styles
-  }
-  /* sets the popup content */
-  content(content = '') {
-    this.popupContent.innerHTML = content
-    // first time content is set
-    if (this.initialState.content === '') this.initialState.content = content
-    return this
+  #setPopupProperties() {
+    this.popupTitle = this.element.querySelector('#popup-title')
+    this.popupBtnClose = this.element.querySelector('#popup-close-button')
+    this.popupContent = this.element.querySelector('#popup-content')
+    this.popupButtons = this.element.querySelector('#popup-buttons')
   }
   /* sets the popup buttons */
   // @buttonObjects: @buttonObject[]
   // @buttonObject: { text: string, handler: function, type: 'confirm | error', style: string }
   // @position: 'left | right'
-  buttons(buttonObjects = [], sharedHandler = () => {}, position = 'left', sharedStyles = '') {
+  #buttons({ elements = [], sharedHandler = () => {}, sharedStyles = '', position = 'left' }) {
     // sharedStyles are styles all buttons share
     // however each button object have a style property for unique styling
     const fragment = document.createDocumentFragment() // fragment to append all buttons
-    buttonObjects.forEach(
+    elements.forEach(
       ({ text = '', handler = () => {}, type = '', style = '', disabled = false }) => {
         const button = document.createElement('button') // create button
         button.innerHTML = text // add button content
         button.onclick = (e) => {
+          e.stopImmediatePropagation()
           handler(e) // call the handler function for each button
           sharedHandler(e, text, button) // call shared handler function for all buttons
         }
@@ -113,17 +77,7 @@ class PopupManager {
     this.popupButtons.appendChild(fragment) // add buttons to popup butttons container
     if (position === 'right') this.popupButtons.classList.add('popup-buttons--right')
     if (position === 'center') this.popupButtons.classList.add('popup-buttons--center')
-    // first time buttons are set
-    if (this.initialState.buttons.length === 0 && buttonObjects.length !== 0)
-      this.initialState.buttons = buttonObjects
     return this
-  }
-  /* get popup back to its initial state */
-  rollback() {
-    this.title(this.initialState.title)
-    this.btnClose(this.initialState.btnClose)
-    this.content(this.initialState.content)
-    this.buttons(this.initialState.buttons)
   }
   /* set popup class to disallow select if necessary */
   allowSelect(allowSelect = true) {
@@ -178,16 +132,80 @@ class PopupManager {
     this.margin(margin)
     return this
   }
-  /* add popup open attribute to show it */
-  show() {
+  #refresh(title, content, buttons) {
+    // update modal content
+    this.popupTitle.innerHTML = title
+    this.popupContent.innerHTML = content
+    this.#buttons(buttons)
+  }
+  display({
+    title = '',
+    content = '',
+    buttons = { elements: [], sharedHandler: () => {}, sharedStyles: '', position: 'left' },
+    allowClosing = true
+  }) {
+    this.#refresh(title, content, buttons)
+    this.allowClosing = allowClosing
     this.element.showModal()
-    // refresh dimensions
-    this.dimensions = this.element.getBoundingClientRect()
+    history.add(title, content, buttons) // add state to popup history
+    return this
+  }
+  update({
+    title = null,
+    content = null,
+    buttons = null,
+    preserveInHistory = true,
+    allowClosing = true
+  }) {
+    let current = history.getCurrent() // get a copy of the current object
+    // if there are no elements in history
+    if (current === null) current = { title: '', content: '', buttons: {} }
+    this.allowClosing = allowClosing
+    // update the received parameters and refresh necessary content
+    if (title !== null) {
+      current.title = title
+      this.popupTitle.innerHTML = title
+    }
+    if (content !== null) {
+      current.content = content
+      this.popupContent.innerHTML = content
+    }
+    if (buttons !== null) {
+      current.buttons = buttons
+      this.#buttons(buttons)
+    }
+    // add updated history state
+    if (preserveInHistory) history.add(current.title, current.content, current.buttons)
+    return this
+  }
+  /* display previous state in history */
+  goBack() {
+    const previous = history.previous()
+    if (previous === null) return // if there are no elements in history
+    this.#refresh(previous.title, previous.content, previous.buttons)
+  }
+  /* display next state in history */
+  goNext() {
+    const next = history.next()
+    if (next === null) return // if there are no elements in history
+    this.#refresh(next.title, next.content, next.buttons)
+  }
+  /* display first state in history */
+  goFirst() {
+    const first = history.first()
+    if (first === null) return
+    this.#refresh(first.title, first.content, first.buttons)
+  }
+  /* display last state in history */
+  goLast() {
+    const last = history.last()
+    if (last === null) return
+    this.#refresh(last.title, last.content, last.buttons)
   }
   /* remove popup open attribute to show it */
   close() {
-    this.rollback()
     this.element.close()
+    history.clear()
   }
 }
 
