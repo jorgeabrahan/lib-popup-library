@@ -1,14 +1,24 @@
-import history from './PopupHistory.js'
-import { isNumberInRange } from './helpers.js'
-import popupHTML from './popupHTML.js'
+import history from 'https://cdn.jsdelivr.net/gh/jorgeabrahan/popup_library@d0bdb37/popup/PopupHistory.js'
 
 /* Import popup css file */
 let link = document.createElement('link')
 link.rel = 'stylesheet'
 link.type = 'text/css'
-link.href = './popup/popup.css'
-// link.href = 'https://cdn.jsdelivr.net/gh/jorgeabrahan/popup_library@a37e08a/popup/popup.css'
+link.href = 'https://cdn.jsdelivr.net/gh/jorgeabrahan/popup_library@926575e/popup/popup.css'
 document.head.appendChild(link)
+
+const isNumberInRange = (range = [0, 2], number = 1) => number > range[0] && number < range[1]
+/* define popup html structure and return it */
+const popupHTML = (btnClose) => `
+  <header class="popup-header">
+    <h3 id='popup-title' class="popup-header__title"></h3>
+    <button id='popup-close-button' class="popup-header__close-button">${btnClose}</button>
+  </header>
+  <hr />
+  <main id='popup-content' class="popup-content"></main>
+  <hr />
+  <footer id='popup-buttons' class="popup-buttons"></footer>
+`
 
 class PopupManager {
   // custom styles and close button can only be set once
