@@ -1,28 +1,48 @@
 import PopupManager from './popup/Popup.js'
-
-const BasicPopup = new PopupManager('Basic popup', 'close', 'border: 2px solid gray;')
-document.getElementById('basic-popup').onclick = () => BasicPopup.show()
-document.getElementById('basic-popup-content').onclick = () =>
-  BasicPopup.content('<p>This is HTML content with <b>bold</b> and <i>cursive</i> text.</p>').show()
-
 const btnClose = '<span class="material-symbols-outlined">close</span>'
-const DeleteFilePopup = new PopupManager('Delete file', btnClose)
-const content = 'Are you sure you want to delete this file?'
-const buttons = [
-  {
-    text: 'Delete',
-    type: 'error',
-    handler: () => {
-      // Here you should have the logic to delete the file
-      // for this example let's consider a timer as an async function
-      setTimeout(() => {
-        DeleteFilePopup.content('File was deleted!')
-      }, 3000) // after 3 seconds file will be deleted
-      // while the file is being deleted you could display a message to your user
-      DeleteFilePopup.content('File is being deleted, please wait...').buttons()
+const DeleteFilePopup = new PopupManager({ btnClose })
+document.getElementById('delete-file').onclick = () =>
+  DeleteFilePopup.display({
+    title: 'Delete file',
+    content: 'Are you sure you want to <b>delete permanently</b> this file?',
+    buttons: {
+      elements: [
+        {
+          text: 'Delete',
+          type: 'error',
+          handler: () => {
+            DeleteFilePopup.update({
+              content: 'File is being deleted...',
+              buttons: {},
+              allowClosing: false
+            })
+            setTimeout(() => {
+              DeleteFilePopup.update({ content: 'File was deleted!' })
+            }, 3000)
+          }
+        },
+        { text: 'Cancel', type: 'confirm', handler: () => DeleteFilePopup.close() }
+      ]
     }
-  },
-  { text: 'Cancel', type: 'confirm', handler: () => DeleteFilePopup.close() }
-]
-DeleteFilePopup.content(content).buttons(buttons)
-document.getElementById('delete-file').onclick = () => DeleteFilePopup.show()
+  })
+
+const slides = ['First slide', 'Second slide', 'Third slide', 'Last slide']
+const BasicPopup = new PopupManager({ btnClose })
+document.getElementById('basic-popup').onclick = () =>
+  BasicPopup.display({
+    title: 'Multiple messages',
+    content: 'This is a popup with multiple messages <b>easy</b> to navigate',
+    buttons: {
+      elements: [
+        { text: 'First', handler: () => BasicPopup.goFirst() },
+        { text: 'Previous', handler: () => BasicPopup.goBack() },
+        { text: 'Next', handler: () => BasicPopup.goNext() },
+        { text: 'Last', handler: () => BasicPopup.goLast() }
+      ]
+    }
+  })
+    .update({ content: slides[0] })
+    .update({ content: slides[1] })
+    .update({ content: slides[2] })
+    .update({ content: slides[3] })
+    .goFirst()
