@@ -1,4 +1,4 @@
-import PopupManager from './popup/Popup.js'
+import PopupManager from 'https://cdn.jsdelivr.net/gh/jorgeabrahan/popup_library@86cdba0/popup/Popup.js'
 const btnClose = '<span class="material-symbols-outlined">close</span>'
 const DeleteFilePopup = new PopupManager({ btnClose })
 document.getElementById('delete-file').onclick = () =>
