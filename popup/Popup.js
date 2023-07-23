@@ -4,13 +4,13 @@ import history from 'https://cdn.jsdelivr.net/gh/jorgeabrahan/popup_library@d0bd
 let link = document.createElement('link')
 link.rel = 'stylesheet'
 link.type = 'text/css'
-link.href = 'https://cdn.jsdelivr.net/gh/jorgeabrahan/popup_library@b769749/popup/popup.css'
+link.href = 'https://cdn.jsdelivr.net/gh/jorgeabrahan/popup_library@a0410e1/popup/popup.css'
 document.head.appendChild(link)
 
 const isNumberInRange = (range = [0, 2], number = 1) => number > range[0] && number < range[1]
 /* define popup html structure and return it */
 const popupHTML = (btnClose) => `
-  <header class="popup-header">
+  <header class="popup-header ${btnClose !== '' ? 'p-1rem' : ''}">
     <h3 id='popup-title' class="popup-header__title"></h3>
     <button id='popup-close-button' class="popup-header__close-button">${btnClose}</button>
   </header>
@@ -51,6 +51,7 @@ class PopupManager {
     document.body.appendChild(this.element)
   }
   #setPopupProperties() {
+    this.popupHeader = this.element.querySelector('.popup-header')
     this.popupTitle = this.element.querySelector('#popup-title')
     this.popupBtnClose = this.element.querySelector('#popup-close-button')
     this.popupContent = this.element.querySelector('#popup-content')
@@ -147,6 +148,10 @@ class PopupManager {
     this.popupTitle.innerHTML = title
     this.popupContent.innerHTML = content
     this.#buttons(buttons)
+    if (this.popupHeader.classList.contains('p-1rem')) {
+      if (title === '' && this.popupBtnClose.innerHTML === '')
+        this.popupHeader.classList.remove('p-1rem')
+    } else if (title !== '') this.popupHeader.classList.add('p-1rem')
   }
   display({
     title = '',
@@ -172,18 +177,10 @@ class PopupManager {
     if (current === null) current = { title: '', content: '', buttons: {} }
     this.allowClosing = allowClosing
     // update the received parameters and refresh necessary content
-    if (title !== null) {
-      current.title = title
-      this.popupTitle.innerHTML = title
-    }
-    if (content !== null) {
-      current.content = content
-      this.popupContent.innerHTML = content
-    }
-    if (buttons !== null) {
-      current.buttons = buttons
-      this.#buttons(buttons)
-    }
+    if (title !== null) current.title = title
+    if (content !== null) current.content = content
+    if (buttons !== null) current.buttons = buttons
+    this.#refresh(current.title, current.content, current.buttons)
     // add updated history state
     if (preserveInHistory) history.add(current.title, current.content, current.buttons)
     return this
