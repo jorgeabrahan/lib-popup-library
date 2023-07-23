@@ -4,7 +4,7 @@ import history from 'https://cdn.jsdelivr.net/gh/jorgeabrahan/popup_library@d0bd
 let link = document.createElement('link')
 link.rel = 'stylesheet'
 link.type = 'text/css'
-link.href = 'https://cdn.jsdelivr.net/gh/jorgeabrahan/popup_library@926575e/popup/popup.css'
+link.href = 'https://cdn.jsdelivr.net/gh/jorgeabrahan/popup_library@b769749/popup/popup.css'
 document.head.appendChild(link)
 
 const isNumberInRange = (range = [0, 2], number = 1) => number > range[0] && number < range[1]
