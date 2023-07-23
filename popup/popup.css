@@ -64,13 +64,15 @@ button.popup-header__close-button:hover {
   color: black;
 }
 
-.popup-header,
 .popup-content,
 .popup-buttons {
   padding: 1rem;
 }
 
-.popup-header:empty,
+.p-1rem {
+  padding: 1rem;
+}
+
 .popup-buttons:empty {
   padding: 0;
 }
