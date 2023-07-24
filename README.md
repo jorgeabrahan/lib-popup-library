@@ -1,63 +1,67 @@
-<h1>Popup library</h1>
-<p>
-  Have you ever struggled to create a nice popup? There are many use cases for popups, and if
-  you are a web developer you will most likely need to create one, but if you don't like styling
-  or you simply don't know where to start, let me tell you you're in the right place.
-</p>
-<h2>Why this library?</h2>
-<p>
-  You might be thinking, I can already use bootstrap or tailwind to display a popup, the thing
-  is that if your project is not that big it might be unnecessary to add those CSS libraries to
-  your project. Also some of this libraries don't let you customize things as you want, or it
-  might be too difficult to do it. That's why I created this Popup library, exclusively to
-  create popups.
-</p>
-<h2>Benefits</h2>
-<p>If you use this library you'll be able to:</p>
-<ul>
-  <li>Create nice looking popups</li>
-  <li>Easily customize all popup styles</li>
-  <li>Handle popup buttons easily</li>
-  <li>Write readable code</li>
-</ul>
-<h2>Quick start</h2>
-<p>You have two options</p>
-<ul>
-  <li>
-    Download the Popup.js and popup.css files from the popup folder and add them to your project
-    in the same path
-  </li>
-  <li>
-    Add a link to the Popup.js file into the head tag of your html file or to the js file where
-    you need to import it.
-    <br /><br />
-    Here's the link that you need to add:
-  </li>
-</ul>
+# Popup Library
+
+If you want to create nice and powerful popups easily using javascript for your website, you're in the right place!
+
+## Why should I use this popup library
+
+- 🏋️ It's lightweight
+- 😅 It's easy to setup
+- 😉 It's easy to use
+- 👍 It helps you create nice popups
+- 📄 It has a great documentation
+
+## Quick start
+
+### Setup
+
+Import the `PopupManager` class from the CDN link at the top of the `.js` file where you want to use the popup library as shown:
 
 ```
-https://cdn.jsdelivr.net/gh/jorgeabrahan/popup_library@66c9181/popup/Popup.js
+import PopupManager from 'https://cdn.jsdelivr.net/gh/jorgeabrahan/popup_library@86cdba0/popup/Popup.js'
 ```
 
-You can import the PopupManager class like this:
+And that's it, you're done! 😁 Now check [how to use](#guide) the `PopupManager` class to create and manage your popups.
 
-```
-import PopupManager from 'https://cdn.jsdelivr.net/gh/jorgeabrahan/popup_library@66c9181/popup/Popup.js'
-```
+> If you are concerned about performance and you want to reduce network requests as much as possible then you can download all three files inside the `popup` folder (`popup.css`, `Popup.js`, `PopupHistory.js`) and add them to your project. Keep in mind that you will need to change the imports in the `Popup.js` file so that the other files are imported from your project and not externally.
 
-<p>
-  The css file is necessary for the library to work, that's why is imported from the Popup.js
-  file, so if you forget to download the popup.css file from the popup folder and add it to your
-  project in the same path as the Popup.js file, it won't work.
-</p>
-<h2>Guide</h2>
-<p>Create an instance of the PopupManager class imported from the Popup.js file as shown:</p>
+## Guide
 
-```
-import PopupManager from "./popup/Popup.js"
+### Popup structure
 
-const ConfirmationPopup = new PopupManager(/* title, btnClose, styles */)
-```
+Let's take a look at the type of popups that you can create using the popup library:
+
+![Popup structure](./images/popup_structure.png)
+
+As you can see a popup may have the following elements:
+
+- ✅ Title
+- ✅ Close button
+- ✅ Content
+- ✅ Interaction buttons
+
+We can organize the popup elements by sections:
+
+- Header
+  - ✅ Title
+  - ✅ Close button
+- Main
+  - ✅ Content
+- Footer
+  - ✅ Interaction buttons
+
+Keep in mind that since none of this elements are mandatory, if you don't specify them when you display the popup it'll just show an empty white box with its default dimensions, however, because of how it is styled the popup adapts depending on which elements you decide to show.
+
+For instance, if you don't specify the `interaction buttons` when displaying the popup it won't show the `Footer` section:
+
+![Popup no footer section](./images/popup_no_footer_section.png)
+
+Similarly, if you don't specify the `title` and `close button` elements when displaying the popup it won't show the `Header` section:
+
+![Popup no footer section](./images/popup_no_header_section.png)
+
+> Keep in mind that in order for the `Header` section not to be shown it has to be completely empty, if you specify either the `close button` or `title` then this section will be shown.
+
+// Todo: mention about custom styles and elements that can't change
 
 <p>
   As you saw when you create an instance of PopupManager you can (not mandatory) specify the
