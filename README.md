@@ -158,6 +158,7 @@ Now that you've already created your popup, let's take a look at how to display 
 Popup.display({}) // notice the empty object sent as parameter!
 ```
 
+<a id="display-and-update-method-parameters"></a>
 The `display()` method, apart from showing the popup, it expects to receive the following properties:
 
 - ✅ Title
@@ -283,7 +284,78 @@ Keeping this in mind will be useful for the next section.
 
 ### Popup update
 
-TODO: work on this section
+> You should've already [created a popup](#popup-creation) and learned how to [display it](#popup-display) by this point in order to follow up with the [popup update](#popup-update) section.
+
+There are some cases in which you will want to update the popup content, you might feel tempted to create a new popup or use the `display()` method for this, but let me tell you there's no need for you to do that because there's already an `update()` method meant to solve this issue.
+
+#### Differences between display() and update()
+
+##### The `display()` method shows the popup and the `update()` method doesn't.
+
+This means that you should always use the `display()` method first to show the popup and after that you can simply keep updating it with the `update()` method.
+
+For instance, the following code **won't display anything**, even though it won't throw any errors:
+
+```
+const Popup = new PopupManager({})
+Popup.update({ title: 'Popup title', content: 'Popup content' }) // notice the update method is being used
+```
+
+Whereas the same code with the display method will have the expected beheavior:
+
+![Display shows the popup but update doesn't](./images/popup_differences_one.png)
+
+```
+const Popup = new PopupManager({})
+Popup.display({ title: 'Popup title', content: 'Popup content' })
+```
+
+##### The `update()` method just updates the popup _properties that were received_ as parameters
+
+Even though both methods receive the exact <a href="#display-and-update-method-parameters">same parameters</a>, the `update()` method will only change the parameters sent to it.
+
+For instance, imagine you call the `display()` method and you set a `title`, `content` and `buttons`:
+
+![Display method with title, content, and buttons](./images/popup_differences_two.png)
+
+```
+const Popup = new PopupManager({})
+Popup.display({
+  title: 'Popup title',
+  content: 'Popup content',
+  buttons: { elements: [{ text: 'ok', type: 'confirm' }] }
+})
+```
+
+Let's see what happens when you call the `update()` method with just the `title`:
+
+![Update just popup title](./images/popup_differences_three.png)
+
+```
+const Popup = new PopupManager({})
+Popup.display({
+  title: 'Popup title',
+  content: 'Popup content',
+  buttons: { elements: [{ text: 'ok', type: 'confirm' }] }
+}).update({ title: 'Updated title' })
+```
+
+As you saw, the `content` and `buttons` remain the same, as the word says, it just "updated" the popup.
+
+Now let's see what happens when you call the `display()` method instead of the update method:
+
+![Display popup with just the title](./images/popup_differences_four.png)
+
+```
+const Popup = new PopupManager({})
+Popup.display({
+  title: 'Popup title',
+  content: 'Popup content',
+  buttons: { elements: [{ text: 'ok', type: 'confirm' }] }
+}).display({ title: 'Updated title' })
+```
+
+As you just saw all values that are not sent return to default, which of course is not the intended behavior. We hope this gave you a better idea of when to use each method.
 
 <p>
   If you spot any bug, please let me know by opening an issue and I will do my best to fix it as
