@@ -17,7 +17,7 @@ If you want to create nice and powerful popups easily using javascript for your 
 Import the `PopupManager` class from the CDN link at the top of the `.js` file where you want to use the popup library as shown:
 
 ```
-import PopupManager from 'https://cdn.jsdelivr.net/gh/jorgeabrahan/popup_library@86cdba0/popup/Popup.js'
+import PopupManager from 'https://cdn.jsdelivr.net/gh/jorgeabrahan/popup_library@67068b1/popup/Popup.js'
 ```
 
 And that's it, you're done! 😁 Now check [how to use](#guide) the `PopupManager` class to create and manage your popups.
