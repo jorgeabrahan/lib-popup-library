@@ -61,175 +61,230 @@ Similarly, if you don't specify the `title` and `close button` elements when dis
 
 > Keep in mind that in order for the `Header` section not to be shown it has to be completely empty, if you specify either the `close button` or `title` then this section will be shown.
 
-// Todo: mention about custom styles and elements that can't change
+Lastly, if you don't specify the `content` when displaying the popup it won't show the `Main` section:
 
-<p>
-  As you saw when you create an instance of PopupManager you can (not mandatory) specify the
-  popup: title, close button and styles. Title and close button parameters are inserted as HTML
-  so you can send or not HTML code. The styles will be added as an attribute so you should send
-  a string of valid css properties like this:
-</p>
+![Popup no main section](./images/popup_no_main_section.png)
 
-```
-const ConfirmationPopup = new PopupManager("Popup title", "close", "border: 2px solid gray;")
-```
+Keep in mind that because of this behavior if you don't specify any element when creating a popup it won't display anything! But there's no reason why you would do this, right?
 
-<p>
-  However if you only create the instance it won't show anything, in order to do this let's take
-  a look at the two most necessary methods from the PopupManager class:
-</p>
-<ul>
-  <li>show(): Shows the created popup. It cannot be nested.</li>
-  <li>close(): Hides the created popup. It cannot be nested.</li>
-</ul>
-<p>
-  Of course, if you use the show() method directly in the created instance it will show the
-  popup once the webpage is loaded, which in most cases is not the intended beheavior, so you
-  will need to handle this with a button click event like this:
-</p>
+#### Popup as object
 
-```
-import PopupManager from './popup/Popup.js'
+From now on, we will treat popups as objects, because that's what they actually are in code, therefore now we'll talk about the popup elements as properties, and apart from the ones we mentioned above we need to add one more:
 
-const BasicPopup = new PopupManager('Basic popup', 'close', 'border: 2px solid gray;')
-document.getElementById('basic-popup').onclick = () => BasicPopup.show()
-```
+- ✅ Title
+- ✅ Close button
+- ✅ Content
+- ✅ Interaction buttons
+- ✅ Custom styles (added)
 
-<p>
-  View the outputs in the deployed website. As you might've already realize the popup doesn't look too nice, that's because it's missing the content. Alongside the content let's take a look at some functions to change thing's we've already added like the title or close button:
-</p>
-<ul>
-  <li>
-    title(title: string): allows you to change the popup title, just as in the constructor it
-    accepts a string that can be HTML code or not. Keep in mind that what you send as a
-    parameter will be placed inside an h3 tag, so if you send HTML avoid using h tags. It can be
-    nested.
-  </li>
-  <li>
-    btnClose(btnClose: string): allows you to change the popup close button, just as in the
-    constructor it accepts a string that can be HTML code or not. Keep in mind that what you
-    send as a parameter will be placed inside a button tag, so if you send HTML avoid using
-    button tags. It can be nested.
-  </li>
-  <li>
-    style(styles: string): allows you to add custom styles to the popup, just as in the
-    constructor it accepts a string with valid css properties separated by semicolons.
-  </li>
-  <li>
-    content(content: string): allows you to insert or change the popup content. It is inserted
-    as HTML so it accepts a string that may contain HTML tags. It can be nested.
-  </li>
-</ul>
-<p>Let's now change the popup content with the new methods that we've learned</p>
+This custom styles property will help you change the default look of the popup if you want to, but we will talk more about the popup styles later.
+
+Now that you know all the popup basic properties, there's a last thing worth covering. Once you create your popup you'll be able to change some properties and some others not. Let's take a look at which properties you'll be able to change or `update`:
+
+- ✅ Title
+- ✅ Content
+- ✅ Interaction buttons
+
+This means that once you define the popup `custom styles` and `close button` you won't be able to change them again.
+
+> Keep in mind that you can always create as many popups as you need, but for each popup you create the custom styles and close button can only be defined once, of course, these properties can have a different value for each popup you create.
+
+### Popup creation
+
+> It's highly recommended to read the popup [structure section](#popup-structure) before learning how to create a popup!
+
+Now that we've covered all the basic properties and structures that our popup may have, let's see how to define them through code.
+
+> In order for all code snippets to work you should've already [setup](#setup) the popup library and imported the `PopupManager` class!
+
+Since popups are instances of the `PopupManager` class, you can simply create a popup like this:
 
 ```
-import PopupManager from './popup/Popup.js'
-
-const BasicPopup = new PopupManager('Basic popup', 'close', 'border: 2px solid gray;')
-document.getElementById('basic-popup').onclick = () => {
-  BasicPopup.content('<p>This is HTML content with <b>bold</b> and <i>cursive</i> text.</p>').show()
-}
+const Popup = new PopupManager({}) // notice the empty object sent as parameter!
 ```
 
-<p>
-  View the outputs in the deployed website. Now let's add something else to make this popup even more useful. We will add buttons to our popup. Let's create a new popup to delete a file:
-</p>
+When you create a popup, the `PopupManager` class it's expecting to receive an object with the 2 unchangable properties mentioned in the [popup structure](#popup-structure) section:
+
+- ✅ Close button
+- ✅ Custom styles
+
+If you don't want to define any of these properties you still need to send an empty object as a parameter (mandatory), otherwise it'll throw an error because the `PopupManager` class constructor will try to destructure these properties.
+
+In case you want to define these properties let's better understand what values you should send:
+
+- ✅ Close button:
+  - **name**: btnClose
+  - **type**: string
+  - **parent**: `<button />` tag that already has a click event handler to close the popup
+  - **value**: plain text or HTML code
+- ✅ Custom styles
+  - **name**: style
+  - **type**: string
+  - **parent**: It's not its actual parent, but the sent value will be set as the `style` attribute of the popup element
+  - **value**: valid CSS properties separated by `;`
+
+Let's see an example of a popup with a close button and custom styles defined:
 
 ```
-const btnClose = '&lt;span class="material-symbols-outlined">close&lt;/span>'
-const DeleteFilePopup = new PopupManager('Delete file', btnClose)
-const content = 'Are you sure you want to delete this file?'
-DeleteFilePopup.content(content)
-document.getElementById('delete-file').onclick = () => DeleteFilePopup.show()
+const Popup = new PopupManager({
+  btnClose: 'close',
+  style: 'border-width: 2px; border-style: solid; border-color: gray'
+})
 ```
 
-<p>
-  Now let's add the buttons but before, let's understand better how to add buttons to the popup:
-</p>
-<ul>
-  <li>
-    buttons(buttonObjects: buttonObject[], sharedHandler: function, position: 'left | center |
-    right', sharedStyles: string): This method allows you to add buttons to the popup, buttons
-    should be added as objects into the buttonObjects array, a buttonObject looks like this:
-  </li>
-</ul>
+Keep in mind that, as mentioned before the `btnClose` property can also receive HTML, and that you can always use external variables to make your code more readable.
+
+Let's rewrite the previous code using variables and [Google Icons](https://fonts.google.com/icons) to display an icon as a close button:
 
 ```
-{
-  text: "The button content, it can be HTML or plain text",
-  handler: "The function that will handle the click event of the button",
-  type: "Can be 'confirm or error' this will only change the button styles",
-  style: "Allows you to set custom styles to each button"
-}
+const btnClose = '<span class="material-symbols-outlined">close</span>'
+const style = 'border-width: 2px; border-style: solid; border-color: gray'
+const Popup = new PopupManager({ btnClose, style })
 ```
 
-So, if you want to add buttons simply create the objects of the buttons that you want to
-add, and send it as the first parameter of the buttons method, however, as you saw you have
-more parameters. So for instance, if you want to handle all the buttons event with a single
-function instead of setting one handler for each funtion, simply send this sharedFunction as
-a second parameter, this function receives 3 parameters, the event, the clicked button text
-and the button itself. After that you can set the buttons position being the options 'left |
-center | right' and lastly if there are some styles that all buttons shared send it as a
-fourth parameter of the buttons function instead of setting the same styles for each button.
+> If you want to test the previous code make sure to setup [Google Icons](https://fonts.google.com/icons) in your project first.
 
-Let's take a look at how to add the buttons with this new knowledge:
+And that's it, just by following these steps you already created a `popup`! Let's now check how to display it.
 
-```
-// this is an icon from Google Icons
-const btnClose = '&lt;span class="material-symbols-outlined">close&lt;/span>'
-const DeleteFilePopup = new PopupManager('Delete file', btnClose)
-const content = 'Are you sure you want to delete this file?'
-const buttons = [
-  {
-    text: 'Delete',
-    type: 'error',
-    handler: () => {
-      // Here you should have the logic to delete the file
-      // for this example let's consider a timer as an async function
-      setTimeout(() => {
-        DeleteFilePopup.content('File was deleted!')
-      }, 3000) // after 3 seconds file will be deleted
-      // while the file is being deleted you could display a message to your user
-      DeleteFilePopup.content('File is being deleted, please wait...').buttons()
-    }
-  },
-  { text: 'Cancel', type: 'confirm', handler: () => DeleteFilePopup.close() }
-]
-DeleteFilePopup.content(content).buttons(buttons)
-document.getElementById('delete-file').onclick = () => DeleteFilePopup.show()
-```
+### Popup display
 
-<p>View the outputs in the deployed website. Now we're just missing 2 main things:</p>
-<ul>
-  <li>
-    rollback(): all PopupManager instances have an initial state which is an object that saves
-    the title, btnClose, content and buttons of the popup the first time they are set. So when
-    you use the rollback method it will get the popup back to its initial state, which basically
-    means that It will set all properties from the initial state object to the popup.
-  </li>
-  <li>
-    options(options: optionsObject): the options parameter allows you to change some properties
-    of the popup, all properties that can be change through the options method can be changed
-    through an inidividual method, but we won't explore each of them, so is just for you to
-    know. The optionsObject parameter looks like this:
-  </li>
-</ul>
+> You should've already [created a popup](#popup-creation) by this point in order to follow up with the [popup display](#popup-display) section.
+
+> For all code snippets presented in this section we will assume that you named the popup variable `Popup` as showed in the [previous section](#popup-creation)!
+
+Now that you've already created your popup, let's take a look at how to display it:
 
 ```
-{
-  allowSelect: boolean that allows the user to select content from the popup or not
-  preventExternalClose: boolean that prevents the user from closing the popup by clicking outside of it or not
-  position: 'top | center | bottom' sets the popup on one of the specified positions
-  maxWidth: number that specifies the amount of pixels that the popup will have as width
-  margin: string that will be set as a margin css property to the
-}
+Popup.display({}) // notice the empty object sent as parameter!
 ```
 
-<p>
-  Feel free to fork this repository and change modify it as you wish. There are other things
-  that I left out because of time but you can explore the code so you discover more methods and
-  functionalities.
-</p>
+The `display()` method, apart from showing the popup, it expects to receive the following properties:
+
+- ✅ Title
+- ✅ Content
+- ✅ Interaction buttons
+- ✅ Allow closing
+
+It is not mandatory to declare any of these properties, however, you should still send an object as a parameter, even if it is empty, to prevent errors.
+
+In case you want to define these properties let's better understand what values you should send:
+
+- ✅ Title:
+  - **name**: title
+  - **type**: string
+  - **parent**: `<h3 />` tag with a default title style
+  - **value**: plain text or HTML code
+- ✅ Content
+  - **name**: content
+  - **type**: string
+  - **parent**: `<main />` tag. Even though you can place plain text inside this element is recommended to use a `<p />` tag to wrap it.
+  - **value**: plain text or HTML code
+- ✅ Interaction buttons
+  - **name**: buttons
+  - **type**: object
+  - **parent**: `<footer />` tag.
+  - **value**: an object with the following properties:
+    - `elements`:
+      - **type**: array
+      - **purpose**: this array of buttons will be looped to create the HTML buttons
+      - **value**: button objects, each object has the following properties:
+        - `text`:
+          - **type**: string
+          - **purpose**: this text will be placed inside the `<button />` tag
+          - **value**: plain text or HTML code
+        - `handler`:
+          - **type**: function
+          - **purpose**: this function will be called every time the button gets clicked
+          - **value**: callback function
+        - `type`:
+          - **type**: string
+          - **purpose**: basically there are three button styles predefined in the `popup.css` file, and by using the `type` property you can choose which of this templates you want to use. If you don't declare this property the button will still have a default style.
+          - **value**: 'confirm | error'
+        - `style`:
+          - **type**: string
+          - **purpose**: this styles will be applied to the button created
+          - **value**: valid CSS properties separated by `;`
+        - `disabled`:
+          - **type**: boolean
+          - **purpose**: this property will be set to the `disabled` attribute of the created button. If button is disabled pointer events won't work and handler function won't be called
+          - **value**: valid CSS properties separated by `;`
+    - `sharedHandler`:
+      - **type**: function
+      - **purpose**: this function will run everytime a button inside the popup is clicked. It receives 3 parameters: event, clicked button text, clicked button
+      - **value**: callback function
+    - `sharedStyles`:
+      - **type**: string
+      - **purpose**: this styles will be applied to all buttons created
+      - **value**: valid CSS properties separated by `;`
+    - `position`:
+      - **type**: string
+      - **purpose**: this property determines where all the buttons should be placed
+      - **value**: 'left | center | right'
+- ✅ Allow closing:
+  - **name**: allowClosing
+  - **type**: boolean
+  - **purpose**: this property determines if the user will be able to close the popup, use it at your own risk. If it is set to true there will be no way of closing the popup, nor with the close button or clicking outside of it. This property is meant to be used when you need the user to wait for something to happen, like when you delete something from the database and you want the user to wait, after receiving the async response you can set this property back to true.
+
+Here's an example on how to display this popup:
+
+![display() method popup example](./images/popup_display_example.png)
+
+```
+const Popup = new PopupManager({ btnClose: 'close' })
+Popup.display({
+  title: 'Popup title',
+  content: 'Popup content',
+  buttons: { elements: [{ text: 'Ok', handler: () => {}, type: 'confirm' }], position: 'center' }
+})
+```
+
+Now it's time for you to practice, I'll show you some images and you need to try to guess how those popups are created. The code solution on how to create them will be underneath each image so try to avoid peeking before you actually solved it on your own.
+
+#### Example 1: Popup with no title
+
+![Popup test knowledge one](./images/popup_test_knowledge_one.png)
+
+```
+const Popup = new PopupManager({})
+Popup.display({
+  content: 'Popup content',
+  buttons: { elements: [{ text: 'Ok', handler: () => {}, type: 'confirm' }], position: 'right' }
+})
+```
+
+#### Example 2: Popup with no content
+
+![Popup test knowledge two](./images/popup_test_knowledge_two.png)
+
+```
+const Popup = new PopupManager({ btnClose: 'close' })
+Popup.display({
+  title: 'Popup title',
+  buttons: { elements: [{ text: 'Ok', handler: () => {}, type: 'confirm' }], position: 'right' }
+})
+```
+
+#### Example 3: Popup with no buttons
+
+![Popup test knowledge three](./images/popup_test_knowledge_three.png)
+
+```
+const Popup = new PopupManager({ btnClose: 'close' })
+Popup.display({ title: 'Popup title', content: 'Popup content' })
+```
+
+That's it, Nice work! Just one last thing, the `display()` method does three things:
+
+- Refresh the popup `title`, `content`, and `buttons`
+- Adds the updated content to the popup history
+- Shows the popup
+
+Keeping this in mind will be useful for the next section.
+
+### Popup update
+
+TODO: work on this section
+
 <p>
   If you spot any bug, please let me know by opening an issue and I will do my best to fix it as
   fast as possible. Feel free to create a pull request for proposed changes to code, styling or
