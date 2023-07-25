@@ -73,6 +73,7 @@ button.popup-header__close-button:hover {
   padding: 1rem;
 }
 
+.popup-content:empty,
 .popup-buttons:empty {
   padding: 0;
 }
