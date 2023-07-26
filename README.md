@@ -314,6 +314,10 @@ Popup.display({ title: 'Popup title', content: 'Popup content' })
 
 Even though both methods receive the exact <a href="#display-and-update-method-parameters">same parameters</a>, the `update()` method will only change the parameters sent to it.
 
+<a id="update-method-additional-parameter"></a>
+
+> Actually the update method has 1 more parameter different than the `display()` method, but we'll talk about it later in the [history section](#popup-history)
+
 For instance, imagine you call the `display()` method and you set a `title`, `content` and `buttons`:
 
 ![Display method with title, content, and buttons](./images/popup_differences_two.png)
@@ -357,8 +361,149 @@ Popup.display({
 
 As you just saw all values that are not sent return to default, which of course is not the intended behavior. We hope this gave you a better idea of when to use each method.
 
-<p>
-  If you spot any bug, please let me know by opening an issue and I will do my best to fix it as
-  fast as possible. Feel free to create a pull request for proposed changes to code, styling or
-  documentation.
-</p>
+### Popup history
+
+Every time you call the `display()` and `update()` methods a state of your popup is added to the popup history. The state of a popup includes only properties that can be changes or updated, properties such as:
+
+- ✅ Title
+- ✅ Content
+- ✅ Interaction buttons
+
+Having a history of your popup will allow you to navigate through it, let's take a look at two examples.
+
+Let's see what happens if you create a popup like this:
+
+![Popup history last page](./images/popup_history_one.png)
+
+```
+const Popup = new PopupManager({})
+Popup.display({
+  title: 'Popup title',
+  content: 'First page',
+  buttons: { elements: [{ text: 'ok', type: 'confirm' }] }
+})
+  .update({ content: 'Second page' })
+  .update({ content: 'Third page' })
+  .update({ content: 'Last page' })
+```
+
+As you can see this is just displaying the last `state` or `update` of our popup, but as I mentioned before, everytime we called the `update()` and `display()` methods, a state of our popup was added to the history.
+
+Now the question is, how can I navigate through the history, well you can use the following methods:
+
+- `goBack()`: navigates to the previous history state if any
+- `goNext()`: navigates to the next history state if any
+- `goFirst()`: navigates to the first history state if any
+- `goLast()`: navigates to the last history state if any
+
+Let's add some buttons to the popup to navigate through history:
+
+```
+const Popup = new PopupManager({})
+Popup.display({
+  title: 'Popup title',
+  content: 'First page',
+  buttons: {
+    elements: [
+      { text: 'goBack', handler: () => Popup.goBack() },
+      { text: 'goNext', handler: () => Popup.goNext() },
+      { text: 'goFirst', handler: () => Popup.goFirst() },
+      { text: 'goLast', handler: () => Popup.goLast() }
+    ]
+  }
+})
+  .update({ content: 'Second page' })
+  .update({ content: 'Third page' })
+  .update({ content: 'Last page' })
+```
+
+One last thing, as you saw from the image above, after updating our popup it prompts on the last page, in most cases this is not the intended beheavior, so to get back to the first history state we could use the methods we've already seen like this:
+
+```
+const Popup = new PopupManager({})
+Popup.display({
+  title: 'Popup title',
+  content: 'First page',
+  buttons: {
+    elements: [
+      { text: 'goBack', handler: () => Popup.goBack() },
+      { text: 'goNext', handler: () => Popup.goNext() },
+      { text: 'goFirst', handler: () => Popup.goFirst() },
+      { text: 'goLast', handler: () => Popup.goLast() }
+    ]
+  }
+})
+  .update({ content: 'Second page' })
+  .update({ content: 'Third page' })
+  .update({ content: 'Last page' })
+  .goFirst() // notice the goFirst method to get back to the first popup state after updating it
+```
+
+Let's take a look at a more real life example of a popup to ask for double confirmation to remove a file and make the user wait while it is being removed:
+
+```
+const Popup = new PopupManager({})
+const onFileDelete = () => {
+  Popup.update({
+    content: 'File is being deleted, please wait...',
+    buttons: {},
+    allowClosing: false
+  })
+  // imagine this is an async call to delete the file
+  setTimeout(() => {
+    // once the file is deleted
+    Popup.update({ content: 'File deleted!', allowClosing: true })
+  }, 3000)
+}
+Popup.display({
+  title: 'Delete file',
+  content: 'Are you sure you want to delete this file?',
+  buttons: {
+    elements: [
+      { text: 'Confirm', handler: () => Popup.goNext() },
+      { text: 'Cancel', handler: () => Popup.close() } // notice the close method
+    ]
+  }
+})
+  .update({
+    content: 'Just as a last confirmation, do you really want to remove this file?',
+    buttons: {
+      elements: [
+        { text: 'Yes', handler: onFileDelete },
+        { text: 'Back', handler: () => Popup.goBack() }
+      ]
+    }
+  })
+  .goFirst()
+```
+
+This last example is excellent to explain an <a href="#update-method-additional-parameter">additional property</a> from the `update()` method that we left out before, and that is `preserveInHistory`. Let's better understand it:
+
+- ✅ Preserve in history:
+  - **name**: preserveInHistory
+  - **type**: boolean
+  - **purpose**: every time you update your popup, this new state will be added to history by default, that way you can navigate through the updates of your popup. However for the cases where you don't want to preserve this changes then you can set the preserveInHistory property to false.
+
+For instance, in the previous example in the `onFileDelete()` function, we displayed this message: `'File is being deleted, please wait...'` while the file was being deleted, and once the file was deleted we displayed: `'File deleted!'`. But if for some reason you add a go back button to this last state of your popup and you click on it, it will navigate to the state of your popup with the message stating that the file was being deleted, which is not actually true anymore. To avoid this use the `preserveInHistory` property mentioned before set to false, like this:
+
+```
+const onFileDelete = () => {
+  Popup.update({
+    content: 'File is being deleted, please wait...',
+    buttons: {},
+    allowClosing: false,
+    preserveInHistory: false
+  })
+  // imagine this is an async call to delete the file
+  setTimeout(() => {
+    // once the file is deleted
+    Popup.update({ content: 'File deleted!', allowClosing: true })
+  }, 3000)
+}
+```
+
+#### Popup options
+
+If you spot any bug, please let me know by opening an issue and I will do my best to fix it as
+soon as possible. Feel free to create a pull request for proposed changes to code, styling or
+documentation.
