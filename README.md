@@ -504,6 +504,91 @@ const onFileDelete = () => {
 
 #### Popup options
 
+The last thing we need to cover is the popup method called `options()` which basically allows you to change the options of your popup.
+
+The `options()` method expects to receive an object with the following properties:
+
+- ✅ Allow Select
+- ✅ Prevent external close
+- ✅ Position
+- ✅ Max width
+- ✅ Margin
+
+It is not mandatory to declare any of these properties, however, you should still send an object as a parameter, even if it is empty, to prevent errors.
+
+In case you want to define these properties let's better understand what values you should send:
+
+- ✅ Allow Select:
+  - **name**: allowSelect
+  - **type**: boolean
+  - **purpose**: determines if the user will be able to select content from inside the popup or not
+  - **default**: true
+- ✅ Prevent external close
+  - **name**: preventExternalClose
+  - **type**: boolean
+  - **purpose**: determines if the user will be able to close the popup by clicking outside of it or not
+  - **default**: false
+- ✅ Position
+  - **name**: position
+  - **type**: string
+  - **purpose**: determines where the popup will be placed on the screen
+  - **value**: 'top | center | bottom'
+  - **default**: 'top'
+- ✅ Max width
+  - **name**: maxWidth
+  - **type**: number
+  - **purpose**: determines the amount of `px` the popup will have as width.
+  - **value**: valid number
+  - **default**: 450
+- ✅ Margin
+  - **name**: margin
+  - **type**: string
+  - **purpose**: determines the separation(`margin`) between the popup and the viewport
+  - **value**: CSS margin property value
+  - **default**: '1rem'
+
+Let's take a look at some examples:
+
+This will call the popup options with the default values:
+
+```
+const Popup = new PopupManager({})
+Popup.options({})
+```
+
+This will set some random values as options:
+
+```
+const Popup = new PopupManager({})
+Popup.options({
+  allowSelect: false,
+  preventExternalClose: true,
+  position: 'center',
+  maxWidth: 500,
+  margin: '1.2rem'
+})
+```
+
+Now, for the cases where you already set the popup options and you just one to change one of them, if you call the `options()` method again with just the property you want to change, it will set the other ones to their default value. For those cases you may use the unique method for each option. Each unique method has the exact same name as the option.
+
+So let's say that I've already set the options but after something happens I want to change the `allowSelect` property, then you should do something like this:
+
+```
+const Popup = new PopupManager({})
+Popup.options({
+  allowSelect: false,
+  preventExternalClose: true,
+  position: 'center',
+  maxWidth: 500,
+  margin: '1.2rem'
+})
+const whenSomethingHappens = () => {
+  Popup.allowSelect(false)
+}
+```
+
+And that's it, you've learned how to use the popup library. Congratulations!
+
 If you spot any bug, please let me know by opening an issue and I will do my best to fix it as
 soon as possible. Feel free to create a pull request for proposed changes to code, styling or
 documentation.
